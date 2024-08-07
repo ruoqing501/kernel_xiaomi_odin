@@ -786,9 +786,18 @@ static ssize_t show_scaling_governor(struct cpufreq_policy *policy, char *buf)
 		return sprintf(buf, "powersave\n");
 	else if (policy->policy == CPUFREQ_POLICY_PERFORMANCE)
 		return sprintf(buf, "performance\n");
-	else if (policy->governor)
-		return scnprintf(buf, CPUFREQ_NAME_PLEN, "%s\n",
-				policy->governor->name);
+
+	else if (policy->governor) {
+#ifdef CONFIG_D8G_SERVICE
+		if (ongame)
+			return scnprintf(buf, CPUFREQ_NAME_PLEN, "%s\n",
+					game_ai_gov_main);
+		else
+#endif
+			return scnprintf(buf, CPUFREQ_NAME_PLEN, "%s\n",
+					policy->governor->name);
+	}
+
 	return -EINVAL;
 }
 
